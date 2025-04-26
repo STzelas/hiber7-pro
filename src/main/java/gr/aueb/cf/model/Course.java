@@ -13,6 +13,9 @@ public class Course {
     @Column(nullable = false)
     private String title;
 
+    // Στα Collections Όταν φορτώσει το course να φορτωθεί ο teacher μόνο αν ζητηθεί - LAZY
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "teacher_id")
     private Teacher teacher;
 
     public Course () {
@@ -47,5 +50,14 @@ public class Course {
 
     public void setTeacher(Teacher teacher) {
         this.teacher = teacher;
+    }
+
+    @Override
+    public String toString() {
+        return "Course{" +
+                "Id=" + Id +
+                ", title='" + title + '\'' +
+                ", teacher=" + teacher +
+                '}';
     }
 }
