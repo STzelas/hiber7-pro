@@ -24,18 +24,25 @@ public class App {
         // Τα παρακάτω θα γίνουν στο managed context
         // οπότε πρέπει να γίνουν μέσα σε transaction
 
-        em.getTransaction().begin();   // Εδώ ξεκινάει το transaction, δηλαδή σειρά crud πράξεων που πρέπει να γίνουν όλες ή καμία
+        // Εδώ ξεκινάει το transaction, δηλαδή σειρά crud πράξεων που πρέπει να γίνουν όλες ή καμία
+        em.getTransaction().begin();
 
-        Teacher alice = em.find(Teacher.class, 1L);  // Τραβάμε την alice πχ που βάλαμε πριν (id = 1L)
-        alice.setLastname("Wonderland");                // Κάνουμε την αλλαγή που θέλουμε με setter
-        em.merge(alice);                                // Με merge κάνουμε update
+        Course course = em.find(Course.class, 2L);                            // Βρίσουμε πρώτα το στοιχείο που ψάχνουμε (databases που ήταν το 2L)
+        em.remove(course);                                                       // Αφαιρούμε το course
 
-//        em.persist(teacher);           // Εισαγωγή entity στο PersistentContext, το αποθηκεύει στην ΒΔ με commit
-//        em.persist(java);              // Εισαγωγή entity στο PersistentContext, το αποθηκεύει στην ΒΔ με commit
+ //       Teacher alice = em.find(Teacher.class, 1L);                            // Τραβάμε την alice πχ που βάλαμε πριν (id = 1L)
+ //       Course databases = new Course(null, "Databases", null);                // Δημιουργία "Databases" μάθημα
+ //       alice.addCourse(databases);                                            // καθηγητή Alice
+//        alice.setLastname("Wonderland");                                       // Κάνουμε την αλλαγή που θέλουμε με setter
+//        em.persist(databases);
+//        em.merge(alice);                                                       // Με merge κάνουμε update
 
-        em.getTransaction().commit();  // Αποθήκευση στη βάση δεδομένων
+//        em.persist(teacher);                                                   // Εισαγωγή entity στο PersistentContext, το αποθηκεύει στην ΒΔ με commit
+//        em.persist(java);                                                      // Εισαγωγή entity στο PersistentContext, το αποθηκεύει στην ΒΔ με commit
 
-        em.close();                    // Και μετά πρέπει να κλείσουν και τα resources emf και em
-        emf.close();                   // Και μετά πρέπει να κλείσουν και τα resources emf και em
+        em.getTransaction().commit();                                            // Αποθήκευση στη βάση δεδομένων
+
+        em.close();                                                              // Και μετά πρέπει να κλείσουν και τα resources emf και em
+        emf.close();                                                             // Και μετά πρέπει να κλείσουν και τα resources emf και em
     }
 }
