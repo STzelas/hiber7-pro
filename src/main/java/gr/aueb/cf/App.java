@@ -3,10 +3,11 @@ package gr.aueb.cf;
 
 import gr.aueb.cf.model.Course;
 import gr.aueb.cf.model.Teacher;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
-import jakarta.persistence.TypedQuery;
+import jakarta.persistence.*;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.ParameterExpression;
+import jakarta.persistence.criteria.Root;
 
 import java.util.List;
 import java.util.Objects;
@@ -70,16 +71,56 @@ public class App {
 //        courses.forEach(System.out::println);
 
         // Select teachers και τίτλους courses που διδάσκουν οι teachers
-        String sql = "SELECT t, c.title FROM Teacher t JOIN t.courses c"; // INNER JOIN
-        TypedQuery<Object[]> query = em.createQuery(sql, Object[].class);
-        List<Object[]> results = query.getResultList();
+//        String sql = "SELECT t, c.title FROM Teacher t JOIN t.courses c"; // INNER JOIN
+//        TypedQuery<Object[]> query = em.createQuery(sql, Object[].class);
+//        List<Object[]> results = query.getResultList();
+//
+//        for (Object[] result : results) {
+//            Teacher teacher = (Teacher) result[0];
+//            String courseTitle = (String) result[1];
+//            System.out.println("Teacher: " + teacher.getLastname() + ", Course: " + courseTitle);
+//        }
 
-        for (Object[] result : results) {
-            Teacher teacher = (Teacher) result[0];
-            String courseTitle = (String) result[1];
-            System.out.println("Teacher: " + teacher.getLastname() + ", Course: " + courseTitle);
-        }
+        /*
+         * Criteria API - ΣΧΗΜΑΤΊΖΟΥΜΕ QUERY
+         */
 
+        // Φέρνει όλους τους teachers
+//        CriteriaBuilder cb = em.getCriteriaBuilder();                   // Interfact το παίρνουμε με τον em
+//        CriteriaQuery<Teacher> query = cb.createQuery(Teacher.class);   // GET τι επιστρέφει το query
+//        Root<Teacher> teacher = query.from(Teacher.class);              // FROM απο που
+//
+//        query.select(teacher);                                          // Πρέπει να είναι το ίδιο με το CriteriaQuery, αυτό που επιστρέφει ίδιο με αυτό που περιμένει να επιστραφεί
+//        List<Teacher> teachers = em.createQuery(query).getResultList();
+//        teachers.forEach(System.out::println);
+
+        // Φερνει ολα τα course titles
+//        CriteriaBuilder cb = em.getCriteriaBuilder();
+//        CriteriaQuery<String> query = cb.createQuery(String.class);
+//        Root<Course> course = query.from(Course.class);
+//
+//        query.select(course.get("title"));  // αντί για region.title το κάνουμε προγραμματιστικά
+//        List<String> titles = em.createQuery(query).getResultList();
+//        titles.forEach(System.out::println);
+
+        // Φέρνει όλους τους teachers με όνομα Μόσχος
+//        CriteriaBuilder cb = em.getCriteriaBuilder();
+//        CriteriaQuery<Teacher> query = cb.createQuery(Teacher.class);
+//        Root<Teacher> rootTeacher = query.from(Teacher.class);
+//
+//        query.select(rootTeacher).where(cb.equal(rootTeacher.get("lastname"), "Μόσχος"));  // WHERE είναι μόσχος
+//        List<Teacher> teachers = em.createQuery(query).getResultList();
+//        teachers.forEach(System.out::println);
+
+        // Το ίδιο με param αντί για string "Μόσχος"
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Teacher> query = cb.createQuery(Teacher.class);
+        Root<Teacher> rootTeacher = query.from(Teacher.class);
+        ParameterExpression<String> lastname = cb.parameter(String.class); // Για parameter αντί για κανονικό String
+
+        query.select(rootTeacher).where(cb.equal(rootTeacher.get("lastname"), lastname));  // WHERE είναι μόσχος
+        List<Teacher> teachers = em.createQuery(query).setParameter(lastname, "Μόσχος").getResultList();
+        teachers.forEach(System.out::println);
 
 
         em.getTransaction().commit();                                            // Αποθήκευση στη βάση δεδομένων
